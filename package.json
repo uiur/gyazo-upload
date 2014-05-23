@@ -1,0 +1,25 @@
+{
+  "name": "gyazo-upload",
+  "version": "0.0.1",
+  "description": "Upload images to gyazo",
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uiureo/gyazo-upload.git"
+  },
+  "scripts": {
+    "test": "node ./test/*.js"
+  },
+  "author": "Kazato Sugimoto",
+  "dependencies": {
+    "es6-promise": "^1.0.0",
+    "open": "0.0.5",
+    "osenv": "0.0.3",
+    "request": "^2.34.0",
+    "screencapture": "0.0.2"
+  },
+  "devDependencies": {
+    "tape": "^2.13.0",
+    "multiparty": "^3.2.6"
+  }
+}
