@@ -1,32 +1,16 @@
 var request = require('request')
   , fs = require('fs')
-  , path = require('path')
   , stream = require('stream')
   , url = require('url')
   , Promise = require('es6-promise').Promise
-  , os = require('os')
-  , osenv = require('osenv')
+  , gyazoId = require('./lib/gyazo_id')
+  , path = require('path')
 
 function uploadURL(host) {
   host = host || 'http://upload.gyazo.com'
   host = host.replace(/\/$/, '')
 
   return host + '/upload.cgi'
-}
-
-function defaultIdPath() {
-  switch (os.platform()) {
-    case 'darwin':
-      return path.resolve(osenv.home(), 'Library/Gyazo/id')
-    case 'linux':
-      return path.resolve(osenv.home(), '.gyazo.id')
-  }
-}
-
-function idPath(optionPath) {
-  return optionPath
-         ? path.resolve(process.cwd(), optionPath)
-         : defaultIdPath()
 }
 
 function isURL(str) {
@@ -53,7 +37,12 @@ function uploadStream(stream, options) {
     var form = requestStream.form()
 
     form.append('imagedata', stream)
-    form.append('id', fs.readFileSync(idPath(options.id)))
+
+    var id = options.id
+           ? fs.readFileSync(path.resolve(process.cwd(), options.id))
+           : gyazoId()
+
+    form.append('id', id)
   })
 }
 
