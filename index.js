@@ -17,6 +17,18 @@ function isURL(str) {
   return !!url.parse(str).host
 }
 
+// @param {String or Stream}
+// @return {ReadableStream}
+function interpretAsStream(input) {
+  if (input instanceof stream.Readable) {
+    return input
+  } else if (isURL(input)) {
+    return request(input)
+  } else {
+    return fs.createReadStream(input)
+  }
+}
+
 /* Upload stream
 
    @param {ReadableStream} stream
@@ -59,17 +71,7 @@ module.exports = function upload(inputs, options) {
   }
 
   var uploads = inputs.map(function (input) {
-    var imageStream
-
-    if (input instanceof stream.Readable) {
-      imageStream = input
-    } else if (isURL(input)) {
-      var url = input
-
-      imageStream = request(url)
-    } else {
-      imageStream = fs.createReadStream(input)
-    }
+    var imageStream = interpretAsStream(input)
 
     return uploadStream(imageStream, options)
   })
