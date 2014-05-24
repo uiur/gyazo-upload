@@ -17,23 +17,17 @@ function isURL(str) {
   return !!url.parse(str).host
 }
 
+// XXX:
 function readId(options) {
-  var idPromise
+  var id
   if (options.id) {
-    idPromise = new Promise(function (resolve, reject) {
-      var idPath = path.resolve(process.cwd(), options.id)
-
-      fs.readFile(idPath, function (err, data) {
-        if (err) return reject(err)
-
-        resolve(data)
-      })
-    })
+    var idPath = path.resolve(process.cwd(), options.id)
+    id = fs.readFileSync(idPath)
   } else {
-    idPromise = gyazoId.read()
+    id = gyazoId.readSync()
   }
 
-  return idPromise
+  return id
 }
 
 // @param {String or Stream}
@@ -58,7 +52,7 @@ function uploadStream(stream, options) {
   options = options || {}
 
   return new Promise(function (resolve, reject) {
-    var requestStream =
+    var r =
       request.post(uploadURL(options.host), function (err, res, url) {
         if (err) return reject(err)
 
@@ -69,13 +63,10 @@ function uploadStream(stream, options) {
         resolve(url)
       })
 
-    var form = requestStream.form()
+    var form = r.form()
 
     form.append('imagedata', stream)
-
-    readId(options).then(function (id) {
-      form.append('id', id)
-    })
+    form.append('id', readId(options))
   })
 }
 
