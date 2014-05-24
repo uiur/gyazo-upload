@@ -1,6 +1,6 @@
 {
   "name": "gyazo-upload",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Upload images to gyazo",
   "main": "./index.js",
   "repository": {
