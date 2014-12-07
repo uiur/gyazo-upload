@@ -17,19 +17,6 @@ function isURL(str) {
   return !!url.parse(str).host
 }
 
-// XXX:
-function readId(options) {
-  var id
-  if (options.id) {
-    var idPath = path.resolve(process.cwd(), options.id)
-    id = fs.readFileSync(idPath)
-  } else {
-    id = gyazoId.readSync()
-  }
-
-  return id
-}
-
 // @param {String or Stream}
 // @return {ReadableStream}
 function interpretAsStream(input) {
@@ -57,7 +44,8 @@ function uploadStream(stream, options) {
         if (err) return reject(err)
 
         if (res.headers['x-gyazo-id']) {
-          gyazoId.save(res.headers['x-gyazo-id'])
+          console.log(res.headers['x-gyazo-id'])
+          gyazoId(options.id).save(res.headers['x-gyazo-id'])
         }
 
         resolve(url)
@@ -66,7 +54,7 @@ function uploadStream(stream, options) {
     var form = r.form()
 
     form.append('imagedata', stream)
-    form.append('id', readId(options))
+    form.append('id', gyazoId(options.id).readSync())
   })
 }
 
